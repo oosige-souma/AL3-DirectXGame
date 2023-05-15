@@ -4,18 +4,37 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() { 
+delete model_;
+delete player_;
+
+}
 
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	textureHandle_ = TextureManager::Load("debugfont.png");
+
+	model_ = Model::Create();
+
+	worldTransform_.Initialize();
+
+	viewProjection_.Initialize();
+
+	player_ = new Player();
+
+	player_->Initialize(model_, textureHandle_);
 }
 
-void GameScene::Update() {}
+void GameScene::Update() { 
+	player_->Update();
+}
 
 void GameScene::Draw() {
+	
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
@@ -40,6 +59,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
+	player_->Draw(viewProjection_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
